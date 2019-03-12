@@ -32,7 +32,6 @@ public class Level {
 			this.height = 64;
 			tiles = new byte[width*height];
 			
-			
 		}
 		
 	}
@@ -57,8 +56,12 @@ public class Level {
 					if (t != null && t.getLevelColor() == tileColors[x+y*width]) {
 						this.tiles[x+y*width] = t.getId();
 						
-//						if(t.getId() == 6) {
-//							entities.add(new TallGrass(this));
+//						if (t.getId() == 4) {
+//							// if there's a tree, make the tile grass
+//							alterTile(x, y, Tile.GRASS);
+//							// and create a tree entity to be generated
+//							
+//							
 //						}
 						
 						break tileCheck;
@@ -79,8 +82,12 @@ public class Level {
 	}
 	
 	public void alterTile(int x, int y, Tile newTile) {
-		this.tiles[x+y*width] = newTile.getId();
-		image.setRGB(x, y, newTile.getLevelColor());
+		
+		if (getTile(x, y) != newTile && getTile(x, y).isBreakable)
+		{
+			this.tiles[x+y*width] = newTile.getId();
+			image.setRGB(x, y, newTile.getLevelColor());
+		}
 		
 	}
 	

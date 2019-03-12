@@ -20,7 +20,7 @@ public abstract class Tile {
 	protected byte id;
 	protected boolean solid;
 	protected boolean emitter;
-	protected boolean isHit;
+	public boolean isBreakable;
 	private int levelColor;
 	
 	public Tile(int id, boolean isSolid, boolean isEmitter, int levelColor) {
@@ -28,10 +28,17 @@ public abstract class Tile {
 		if(tiles[id] != null) throw new RuntimeException("Duplicate Tile ID");
 		this.solid = isSolid;
 		this.emitter = isEmitter;
-		this.isHit = false;
-		
 		this.levelColor = levelColor;
 		tiles[id] = this;
+		
+		if (id == 4 || id == 6)
+		{
+			isBreakable = true;
+		}
+		else
+		{
+			isBreakable = false;
+		}
 	}
 	
 	public byte getId() {

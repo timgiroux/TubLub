@@ -9,8 +9,8 @@ import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 
 public class PlayMusic {
-	String _30b0 = "/Users/tlg/eclipse-workspace/2dGame/res/sound/30b0.wav/";
-	String _b1a3 = "/Users/tlg/eclipse-workspace/2dGame/res/sound/b1a3.wav/";
+	String _30b0 = "/Users/tlg/git/TubaLub/2dGame/res/sound/30b0.wav/";
+	String _b1a3 = "/Users/tlg/git/TubaLub/2dGame/res/sound/b1a3.wav/";
 	
 	String[] soundTrack = {_30b0, _b1a3};
 	

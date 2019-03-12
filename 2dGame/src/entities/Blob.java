@@ -1,27 +1,27 @@
 package entities;
 
+import java.util.Random;
+
 import game.Colors;
-import game.InputHandler;
 import game.gfx.Screen;
 import game.level.Level;
 import game.level.tiles.Tile;
 
-public class Player extends Mob{
+public class Blob extends Mob {
 
-	private InputHandler input;
-	private int color = Colors.get(-1, 521, 210, 543);
+	private int color = Colors.get(-1, 320, 121, 050);
 	private int scale = 1;
+	private float speed = 1f;
 	protected boolean isSwimming = false;
 	private int tickCount = 0;
 	private int jump_state = 0; // 0:false 1:true, 2:jumping, // 3:cool down
 	private int jump_modifier = 0;
 	private int hit_state = 0; // 0:false 1:true, 2:hitting, // 3:cool down
+	private Random random_direction = new Random();
 	
 	
-	public Player(Level level, int x, int y, float speed, InputHandler input) {
-		super(level, "Player", x, y, speed);
-		// toot
-		this.input = input;
+	public Blob(Level level, int x, int y) {
+		super(level, "Blob", x, y, 1);
 		
 		
 	}
@@ -183,7 +183,7 @@ public class Player extends Mob{
 			hit_destroy(level);
 			
 			// directional
-			int hitColor = Colors.get(-1, -1, 550, 550);
+			int hitColor = Colors.get(-1, -1, 555, 500);
 			
 			if(movingDir == 0) {
 				screen.render(xOffset+4,yOffset-5,0+1*32,hitColor,0x00,1);
@@ -202,36 +202,27 @@ public class Player extends Mob{
 		
 	}
 	
+	int dir = 0;
 	public void tick() {
-		float xa = 0;
-		float ya = 0;
-		if (input.up.isPressed()) {
+		
+		if (tickCount % 10 == 0)
+		{
+			dir = random_direction.nextInt(7);
+		}
+		int xa = 0;
+		int ya = 0;
+		if (dir == 0) {
 			ya-= speed;
 		}
-		if (input.down.isPressed()) {
+		if (dir == 1) {
 			ya+= speed;
 		}
-		if (input.left.isPressed()) {
+		if (dir == 2) {
 			xa-= speed;
 		}
-		if (input.right.isPressed()) {
+		if (dir == 3) {
 			xa+= speed;
 		}
-		if (input.space.isPressed()) {
-			if(jump_state == 0 && !isSwimming) {
-				jump_state = 1;
-			}
-		}
-		if(input.a.isPressed()) {
-			if(hit_state == 0 && !isSwimming) {
-				hit_state = 1;
-			}
-		
-		
-		}
-		
-		
-		
 		
 		if(xa != 0 || ya != 0) {
 			move(xa, ya);
@@ -246,7 +237,7 @@ public class Player extends Mob{
 		if(isSwimming && level.getTile(this.x>>3, this.y>>3).getId() != 3) {
 			isSwimming = false;
 		}
-	
+		
 		tickCount++;
 	}
 	
@@ -289,3 +280,4 @@ public class Player extends Mob{
 	}
 
 }
+

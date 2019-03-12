@@ -7,9 +7,11 @@ import java.awt.Graphics;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
+import java.util.ArrayList;
 
 import javax.swing.JFrame;
 
+import entities.Blob;
 import entities.Player;
 import game.gfx.Screen;
 import game.gfx.SpriteSheet;
@@ -39,6 +41,8 @@ public class Game extends Canvas implements Runnable {
 	public InputHandler input;
 	public Level level;
 	public Player player;
+	public ArrayList<Blob> blobs = new ArrayList<Blob>();
+	public int blobnum = 50;
 	
 
 	public Game() {
@@ -76,8 +80,15 @@ public class Game extends Canvas implements Runnable {
 
 		screen = new Screen(WIDTH, HEIGHT, new SpriteSheet("/sprite_sheet.png"));
 		input = new InputHandler(this);
-		level = new Level("/levels/big_level.png");
-		player = new Player(level, 200, 200, input);
+		level = new Level("/levels/cool_level.png");
+		player = new Player(level, 200, 200, 1f, input);
+		
+		for(int i = 0; i < blobnum; i++) {
+			Blob b = new Blob(level, i*5, i*5);
+			blobs.add(b);
+			level.addEntity(b);
+		}
+		
 		level.addEntity(player);
 		
 		
@@ -151,7 +162,10 @@ public class Game extends Canvas implements Runnable {
 	public void tick() {
 		tickCount++;
 		
+	
 		level.tick();
+
+		
 
 	}
 
