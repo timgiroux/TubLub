@@ -9,12 +9,13 @@ import java.util.List;
 import javax.imageio.ImageIO;
 
 import entities.Entity;
-
+import game.Colors;
 import game.gfx.Screen;
 import game.level.tiles.Tile;
 
 public class Level {
 	private byte[] tiles;
+	private byte[] tiles3d;
 	public int width;
 	public int height;
 	public List<Entity> entities = new ArrayList<Entity>();
@@ -41,6 +42,7 @@ public class Level {
 			this.width = image.getWidth();
 			this.height = image.getHeight();
 			tiles = new byte[width*height];
+			tiles3d = new byte[width*height];
 			this.loadTiles();
 			
 		} catch (IOException e) {
@@ -56,13 +58,13 @@ public class Level {
 					if (t != null && t.getLevelColor() == tileColors[x+y*width]) {
 						this.tiles[x+y*width] = t.getId();
 						
-//						if (t.getId() == 4) {
-//							// if there's a tree, make the tile grass
-//							alterTile(x, y, Tile.GRASS);
-//							// and create a tree entity to be generated
-//							
-//							
-//						}
+						if (t.getId() == 4 || t.getId() == 6) {
+							// if tree or grass, add to tiles3d
+							
+							this.tiles3d[x+y*width] = t.getId();
+							
+							
+						}
 						
 						break tileCheck;
 					}
@@ -105,21 +107,24 @@ public class Level {
 		}
 	}
 	
-	public void tick()
+	public void tick(int tickCount)
 	{
 		
-		for(Entity e: entities)
+		if(tickCount%4 == 0) // slows down player movement
 		{
-			e.tick();
-		}
-		
-		for (Tile t : Tile.tiles)
-		{
-			if (t == null)
+			for(Entity e: entities)
 			{
-				break;
+				e.tick();
 			}
-			t.tick();
+			
+			for (Tile t : Tile.tiles)
+			{
+				if (t == null)
+				{
+					break;
+				}
+				t.tick();
+			}
 		}
 		
 	}
@@ -150,28 +155,100 @@ public class Level {
 		}
 	}
 	
-	public void renderEntities(Screen screen) {
-		for(Entity e: entities) {
+	public void renderTile(Screen screen, int xOffset, int yOffset, int x, int y, boolean is3d) {
+		if (xOffset < 0) xOffset = 0;
+		if(xOffset > ((width <<3)-screen.width)) xOffset = ((width <<3)-screen.width);
+		if (yOffset < 0) yOffset = 0;
+		if(yOffset > ((height <<3)-screen.height)) yOffset = ((height <<3)-screen.height);
+
+		screen.setOffset(xOffset, yOffset);
+		
+		if(!is3d)
+		{
+		
+			getTile(x, y).render(screen, this, x<<3, y<<3);
 			
-			e.render(screen);
+			if(getTile(x,y).getId() == 6)
+			{
+				Tile.GRASS.render(screen, this, x<<3, y<<3);
+				getTile(x, y).render(screen, this, x<<3, y<<3);
+			}
+		
+		}
+		else {
+			if(getTile(x, y).isBreakable)
+			{
+				getTile(x, y).render(screen, this, x<<3, y<<3);
+			}
+		}
+		
+		
+	}
+	
+	
+//	public void renderEntities(Screen screen) {
+//		for(Entity e: entities) {
+//			
+//			e.render(screen);
+//			
+//		}
+//		
+//	}
+	
+	public void renderMobs(Screen screen, int xOffset, int yOffset) {
+		
+		for(Entity e: entities) 
+		{
+			int tileX = (e.x+2)>>3;
+			int tileY = (e.y+5)>>3;
+				
+			if(getTile(tileX, tileY).isBreakable)
+			{
+				renderTile(screen, xOffset, yOffset, tileX, tileY-1, false);
+				renderTile(screen, xOffset, yOffset, tileX, tileY, false);
 			
+				e.render(screen);
+				renderTile(screen, xOffset, yOffset, tileX, tileY, true);
+			}
+			else
+			{
+				e.render(screen);
+			}
 		}
 	}
 	
-	public void renderTrees(Screen screen, int py) {
+	
+	public void renderTrees(Screen screen) {
 		for(int y = 0; y < height; y++) {
 			for(int x = 0; x < width; x++) {
-				if (getTile(x, y).getId() == 6 && y<<3 > py-2)
-				{
-					// tall grass
-					
-				getTile(x, y).render(screen, this, x<<3, y<<3);
-				}
-				
-				if (getTile(x, y).getId() == 4 && y<<3 > py)
+				if (getTile(x, y).getId() == 4)
 				{
 					// trees
-				getTile(x, y).render(screen, this, x<<3, y<<3);
+					
+					int treex = x<<3;
+					int treey = y<<3;
+					int treeColor = getTile(x, y).getTileColor();
+					int leafColor = Colors.get(522, 020, -1, 225);
+					
+					// render tree logs
+					screen.render(treex, treey-8, 3, treeColor, 0x11, 1);
+					screen.render(treex, treey-16, 3, treeColor, 0x11, 1);
+					
+
+					// render tree leaves
+					screen.render(treex, treey-16, 4, leafColor, 0x01, 1);
+					screen.render(treex, treey-24, 4, leafColor, 0x10, 1);
+					screen.render(treex, treey-32, 4, leafColor, 0x11, 1);
+					screen.render(treex-8, treey-16, 4, leafColor, 0x10, 1);
+					screen.render(treex+8, treey-16, 4, leafColor, 0x10, 1);
+					screen.render(treex-16, treey-16, 4, leafColor, 0x00, 1);
+					screen.render(treex+16, treey-16, 4, leafColor, 0x10, 1);
+					screen.render(treex-8, treey-24, 4, leafColor, 0x10, 1);
+					screen.render(treex+8, treey-24, 4, leafColor, 0x11, 1);
+					screen.render(treex-16, treey-24, 4, leafColor, 0x11, 1);
+					screen.render(treex+16, treey-24, 4, leafColor, 0x10, 1);
+					screen.render(treex-8, treey-32, 4, leafColor, 0x00, 1);
+					screen.render(treex+8, treey-32, 4, leafColor, 0x10, 1);
 				}
 				
 			}
@@ -184,6 +261,11 @@ public class Level {
 			return Tile.VOID;
 		}
 		return Tile.tiles[tiles[x+y*width]];
+	}
+	
+	
+	public int getTile3d(int x, int y) {
+		return tiles3d[x+y*width];
 	}
 	
 	public void addEntity(Entity entity) {

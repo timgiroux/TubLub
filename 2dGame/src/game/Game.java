@@ -81,10 +81,10 @@ public class Game extends Canvas implements Runnable {
 		screen = new Screen(WIDTH, HEIGHT, new SpriteSheet("/sprite_sheet.png"));
 		input = new InputHandler(this);
 		level = new Level("/levels/cool_level.png");
-		player = new Player(level, 200, 200, 1f, input);
+		player = new Player(level, 200, 200, 2f, input);
 		
 		for(int i = 0; i < blobnum; i++) {
-			Blob b = new Blob(level, i*5, i*5);
+			Blob b = new Blob(level, i*8, 100*(i%5));
 			blobs.add(b);
 			level.addEntity(b);
 		}
@@ -163,7 +163,7 @@ public class Game extends Canvas implements Runnable {
 		tickCount++;
 		
 	
-		level.tick();
+		level.tick(tickCount);
 
 		
 
@@ -186,9 +186,11 @@ public class Game extends Canvas implements Runnable {
 		
 		
 		
-		level.renderEntities(screen);
+		// level.renderEntities(screen);
 		
-		level.renderTrees(screen, player.y);
+		level.renderMobs(screen, xOffset, yOffset);
+		
+		level.renderTrees(screen);
 		
 		
 		for (int y = 0; y < screen.height; y++) {

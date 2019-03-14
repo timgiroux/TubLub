@@ -14,7 +14,7 @@ public abstract class Tile {
 			Colors.get(-1, 115, 225, -1), 0xff0000ff, 500);		
 	public static final Tile TREE = new BasicSolidTile(4, 3, 0, Colors.get(-1, 322, 433, 500), 0xffffffff);
 	public static final Tile LEAVE = new BasicTile(5, 4, 0,Colors.get(-1, 020, 132, 511), 0xff123456);
-	public static final Tile TALLGRASS = new AnimatedTile(6, new int[][] {{0,6},{1,6},{2,6}, {1,6}},
+	public static final Tile TALLGRASS = new AnimatedTile(6, new int[][] {{0,6},{1,6},{2,6}},
 			Colors.get(-1, 021, 231, -1), 0xffff0000, 250);
 	
 	protected byte id;

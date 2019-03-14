@@ -22,8 +22,6 @@ public class Blob extends Mob {
 	
 	public Blob(Level level, int x, int y) {
 		super(level, "Blob", x, y, 1);
-		
-		
 	}
 	
 	
@@ -35,7 +33,6 @@ public class Blob extends Mob {
 			// begin the hit
 			
 			hit_time = System.currentTimeMillis()+250;
-			
 			
 			hit_state = 2;
 			
