@@ -22,7 +22,7 @@ public class Game extends Canvas implements Runnable {
 
 	private static final long serialVersionUID = 1L;
 
-	public static final int WIDTH = 160, HEIGHT = WIDTH / 12 * 9;
+	public static final int WIDTH = 360, HEIGHT = WIDTH / 12 * 9;
 	public static final int SCALE = 3;
 	public static final String NAME = "Game";
 
@@ -40,7 +40,7 @@ public class Game extends Canvas implements Runnable {
 	private Screen screen;
 	public InputHandler input;
 	public Level level;
-	public Player player;
+	public static Player player;
 	public ArrayList<Blob> blobs = new ArrayList<Blob>();
 	public int blobnum = 50;
 	
@@ -184,7 +184,7 @@ public class Game extends Canvas implements Runnable {
 		
 		level.renderTiles(screen, xOffset, yOffset);
 		
-		
+		level.checkPlayerDeath();
 	
 		level.checkDartHit();
 		

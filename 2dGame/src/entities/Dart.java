@@ -9,7 +9,7 @@ public class Dart extends Entity{
 	private int speed = 1;
 	private boolean isHit = false;
 	private int direction;
-	private int dartColor = Colors.get(-1, -1, 521, 500);
+	private int dartColor = Colors.get(-1, -1, 521, 210);
 	private byte flipDart = 0x00;
 	private int dartTile = 1+27*32;
 
@@ -66,7 +66,7 @@ public class Dart extends Entity{
 	{
 		
 		// if this.x and this.y are within the 8x16 tile from x, y
-		if(this.x >= x && this.x <= x+8 && this.y >= y && this.y <= y+16)
+		if(this.x >= x-4 && this.x <= x+8 && this.y >= y && this.y <= y+16)
 		{
 			isHit = true;
 			return true;

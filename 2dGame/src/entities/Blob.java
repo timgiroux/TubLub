@@ -3,13 +3,14 @@ package entities;
 import java.util.Random;
 
 import game.Colors;
+import game.Game;
 import game.gfx.Screen;
 import game.level.Level;
 import game.level.tiles.Tile;
 
 public class Blob extends Mob {
 
-	private int color = Colors.get(-1, 320, 121, 050);
+	private int color = Colors.get(-1, 300, 211, 434);
 	private int scale = 1;
 	private float speed = 1f;
 	protected boolean isSwimming = false;
@@ -18,6 +19,7 @@ public class Blob extends Mob {
 	private int jump_modifier = 0;
 	private int hit_state = 0; // 0:false 1:true, 2:hitting, // 3:cool down
 	private Random random_direction = new Random();
+	private boolean random_movement = false;
 	
 	
 	public Blob(Level level, int x, int y) {
@@ -115,7 +117,7 @@ public class Blob extends Mob {
 		int yOffset = y - modifier / 2 - 4;
 		yOffset += jump_modifier;
 		
-		int xTile = 0;
+		int xTile = 10;
 		int yTile = 28;
 		int walkingSpeed = 4;
 		int flipTop = (numSteps >> walkingSpeed) & 1;
@@ -205,6 +207,15 @@ public class Blob extends Mob {
 		
 	}
 	
+	public int dir_to_player(int px, int py) {
+		// returns a dir value
+		if(px > x) return 3;
+		if(py > y) return 1;
+		if(px < x) return 2;
+		if(py < y) return 0;
+		return 0;
+	}
+	
 	int dir = 0;
 	public void tick() {
 		
@@ -218,38 +229,59 @@ public class Blob extends Mob {
 		} else
 		{
 		
-		if (tickCount % 10 == 0)
-		{
-			dir = random_direction.nextInt(7);
-		}
-		int xa = 0;
-		int ya = 0;
-		if (dir == 0) {
-			ya-= speed;
-		}
-		if (dir == 1) {
-			ya+= speed;
-		}
-		if (dir == 2) {
-			xa-= speed;
-		}
-		if (dir == 3) {
-			xa+= speed;
-		}
-		
-		if(xa != 0 || ya != 0) {
-			move(xa, ya);
-			isMoving = true;
+			int xa = 0;
+			int ya = 0;
 			
-		} else {
-			isMoving = false;
-		}
-		if (level.getTile(this.x>>3, this.y>>3).getId() == 3) {
-			isSwimming = true;
-		}
-		if(isSwimming && level.getTile(this.x>>3, this.y>>3).getId() != 3) {
-			isSwimming = false;
-		}
+			
+			if(random_movement)
+			{
+				if (tickCount % 10 == 0)
+				{
+					dir = random_direction.nextInt(7);
+					
+				}
+				if((tickCount+x)%2 == 0)
+				{
+					random_movement = false;
+				}
+				
+			}
+			else  // follow player
+			{
+				dir = dir_to_player(Game.player.x, Game.player.y);
+				
+				if(tickCount%10 == 0)
+				{
+					random_movement = true;
+				}
+			}
+			
+			if (dir == 0) {
+				ya-= speed;
+			}
+			if (dir == 1) {
+				ya+= speed;
+			}
+			if (dir == 2) {
+				xa-= speed;
+			}
+			if (dir == 3) {
+				xa+= speed;
+			}
+			
+			if(xa != 0 || ya != 0) {
+				move(xa, ya);
+				isMoving = true;
+				
+			} else {
+				isMoving = false;
+			}
+			if (level.getTile(this.x>>3, this.y>>3).getId() == 3) {
+				isSwimming = true;
+			}
+			if(isSwimming && level.getTile(this.x>>3, this.y>>3).getId() != 3) {
+				isSwimming = false;
+			}
 		}
 		
 		tickCount++;

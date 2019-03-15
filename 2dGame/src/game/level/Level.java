@@ -188,7 +188,23 @@ public class Level {
 		
 	}
 	
-	
+	public void checkPlayerDeath()
+	{
+		for(Entity b: entities) // for every blob b
+		{
+			if(b instanceof Blob) {
+				
+				for(Entity p: entities) // for every player p
+				{
+					if(p instanceof Player) {
+						
+						((Player) p).check_kill(b.x, b.y);
+						
+					}
+				}
+			}
+		}
+	}
 	public void checkDartHit() {
 		for (Dart dart: Player.darts)
 		{

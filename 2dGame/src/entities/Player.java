@@ -13,6 +13,7 @@ public class Player extends Mob{
 
 	private InputHandler input;
 	private int color = Colors.get(-1, 521, 210, 543);
+	private int deathColor = Colors.get(-1, 300, 211, 434);
 	private int scale = 1;
 	protected boolean isSwimming = false;
 	private int tickCount = 0;
@@ -108,29 +109,58 @@ public class Player extends Mob{
 		if (movingDir == 0)
 		{
 			if (isWood(level, x, y, x, y-1)) add_inventory(4);
+			if (isWood(level, x+1, y, x+1, y-1)) add_inventory(4);
+			if (isWood(level, x-1, y, x-1, y-1)) add_inventory(4);
 			level.alterTile(x, y-0, Tile.GRASS);
 			level.alterTile(x, y-1, Tile.GRASS);
+			level.alterTile(x+1, y-0, Tile.GRASS);
+			level.alterTile(x+1, y-1, Tile.GRASS);
+			level.alterTile(x-1, y-0, Tile.GRASS);
+			level.alterTile(x-1, y-1, Tile.GRASS);
 		}
 		
 		if (movingDir == 1)
 		{
 			if (isWood(level, x, y, x, y+1)) add_inventory(4);
+			if (isWood(level, x+1, y, x+1, y+1)) add_inventory(4);
+			if (isWood(level, x-1, y, x-1, y+1)) add_inventory(4);
+			if (isWood(level, x+1, y, x+1, y+2)) add_inventory(4);
+			if (isWood(level, x-1, y, x-1, y+2)) add_inventory(4);
 			level.alterTile(x, y+0, Tile.GRASS);
 			level.alterTile(x, y+1, Tile.GRASS);
+			level.alterTile(x, y+2, Tile.GRASS);
+			level.alterTile(x+1, y+0, Tile.GRASS);
+			level.alterTile(x+1, y+1, Tile.GRASS);
+			level.alterTile(x-1, y+0, Tile.GRASS);
+			level.alterTile(x-1, y+1, Tile.GRASS);
+			level.alterTile(x+1, y+2, Tile.GRASS);
+			level.alterTile(x-1, y+2, Tile.GRASS);
 		}
 		if (movingDir == 2)
 		{
 			if (isWood(level, x-1, y, x-2, y)) add_inventory(4);
+			if (isWood(level, x-1, y+1, x-2, y+1)) add_inventory(4);
+			if (isWood(level, x-1, y-1, x-2, y-1)) add_inventory(4);
 			level.alterTile(x-1, y, Tile.GRASS);
 			level.alterTile(x-2, y, Tile.GRASS);
+			level.alterTile(x-1, y+1, Tile.GRASS);
+			level.alterTile(x-2, y+1, Tile.GRASS);
+			level.alterTile(x-1, y-1, Tile.GRASS);
+			level.alterTile(x-2, y-1, Tile.GRASS);
 		}
 		
 		if (movingDir == 3)
 		{
 			// if a wood block is broken, add to inventory
 			if (isWood(level, x+1, y, x+2, y)) add_inventory(4);
+			if (isWood(level, x+1, y+1, x+2, y+1)) add_inventory(4);
+			if (isWood(level, x+1, y-1, x+2, y-1)) add_inventory(4);
 			level.alterTile(x+1, y, Tile.GRASS);
 			level.alterTile(x+2, y, Tile.GRASS);
+			level.alterTile(x+1, y+1, Tile.GRASS);
+			level.alterTile(x+2, y+1, Tile.GRASS);
+			level.alterTile(x+1, y-1, Tile.GRASS);
+			level.alterTile(x+2, y-1, Tile.GRASS);
 		}
 		
 	}
@@ -212,13 +242,24 @@ public class Player extends Mob{
 			level.getTile(dart.x/8, dart.y/8).getId() == 4)
 			{
 				// if this dart hits tree or stone
-				dart.isHit(true);
+				 dart.isHit(true);
 			}
 			else if (level.getTile(dart.x/8, dart.y/8).getId() == 6)
 			{
 				level.alterTile(dart.x/8, dart.y/8, Tile.GRASS);
 			}
 		}
+	}
+	
+	public boolean check_kill(int bx, int by) {
+		if(jump_state != 0) return false; // can't die if jumping
+		// if this.x and this.y are within the 8x16 tile from bx, by
+		if(this.x >= bx-4 && this.x <= bx+8 && this.y+8 >= by && this.y+8<= by+16)
+		{
+			isKill = true;
+			return true;
+		}
+		return false;
 	}
 	
 	
@@ -233,6 +274,9 @@ public class Player extends Mob{
 		int walkingSpeed = 2;
 		int flipTop = (numSteps >> walkingSpeed) & 1;
 		int flipBottom = (numSteps >> walkingSpeed) & 1;
+		
+		// change player color on death
+		if(isKill) color = deathColor;
 		
 		
 		// render all darts
@@ -351,39 +395,43 @@ public class Player extends Mob{
 	public void tick() {
 		float xa = 0;
 		float ya = 0;
-		if (input.up.isPressed()) {
-			movingDir = 0;
-			ya-= speed;
-		}
-		if (input.down.isPressed()) {
-			movingDir = 1;
-			ya+= speed;
-		}
-		if (input.left.isPressed()) {
-			movingDir = 2;
-			xa-= speed;
-		}
-		if (input.right.isPressed()) {
-			movingDir = 3;
-			xa+= speed;
-		}
-		if (input.space.isPressed()) {
-			if(jump_state == 0 && !isSwimming) {
-				jump_state = 1;
+		
+		if(!isKill) // restrict all movement input if player dies
+		{
+			if (input.up.isPressed()) {
+				movingDir = 0;
+				ya-= speed;
 			}
-		}
-		if(input.a.isPressed()) {
-			if(hit_state == 0 && !isSwimming) {
-				hit_state = 1;
+			if (input.down.isPressed()) {
+				movingDir = 1;
+				ya+= speed;
 			}
-		}
-		if(input.b.isPressed()) {
-			if(throw_state == 0 && !isSwimming) {
-				throw_state = 1;
-				throw_dir = movingDir;
+			if (input.left.isPressed()) {
+				movingDir = 2;
+				xa-= speed;
 			}
-			
-			
+			if (input.right.isPressed()) {
+				movingDir = 3;
+				xa+= speed;
+			}
+			if (input.space.isPressed()) {
+				if(jump_state == 0 && !isSwimming) {
+					jump_state = 1;
+				}
+			}
+			if(input.a.isPressed()) {
+				if(hit_state == 0 && !isSwimming) {
+					hit_state = 1;
+				}
+			}
+			if(input.b.isPressed()) {
+				if(throw_state == 0 && !isSwimming) {
+					throw_state = 1;
+					throw_dir = movingDir;
+				}
+				
+				
+			}
 		}
 		
 		
