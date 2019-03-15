@@ -8,7 +8,10 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 
+import entities.Blob;
+import entities.Dart;
 import entities.Entity;
+import entities.Player;
 import game.Colors;
 import game.gfx.Screen;
 import game.level.tiles.Tile;
@@ -186,14 +189,26 @@ public class Level {
 	}
 	
 	
-//	public void renderEntities(Screen screen) {
-//		for(Entity e: entities) {
-//			
-//			e.render(screen);
-//			
-//		}
-//		
-//	}
+	public void checkDartHit() {
+		for (Dart dart: Player.darts)
+		{
+			for(Entity e: entities)
+			{
+				if(!(e instanceof Player))
+				{
+					if(dart.check_hit(e.x, e.y-10))
+					{
+//						System.out.println("yo");
+						if(e instanceof Blob)
+						{
+							e.setKill(true);
+						}
+					}
+				}
+				
+			}
+		}
+	}
 	
 	public void renderMobs(Screen screen, int xOffset, int yOffset) {
 		

@@ -9,7 +9,7 @@ public abstract class Tile {
 	public static final Tile[] tiles = new Tile[256];
 	public static final Tile VOID = new BasicSolidTile(0, 0, 0, Colors.get(000, -1, -1, -1), 0xff000000);
 	public static final Tile STONE = new BasicSolidTile(1, 1, 0, Colors.get(-1, 333, 232, -1), 0xff555555);
-	public static final Tile GRASS = new BasicTile(2, 2, 0, Colors.get(-1, 131, 141, 232), 0xff00ff00);
+	public static final Tile GRASS = new BasicTile(2, 2, 0, Colors.get(-1, 131, 141, 322), 0xff00ff00);
 	public static final Tile WATER = new AnimatedTile(3, new int[][] {{0,5},{1,5},{2,5}, {1,5}},
 			Colors.get(-1, 115, 225, -1), 0xff0000ff, 500);		
 	public static final Tile TREE = new BasicSolidTile(4, 3, 0, Colors.get(-1, 322, 433, 500), 0xffffffff);

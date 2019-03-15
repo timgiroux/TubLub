@@ -22,6 +22,7 @@ public class Blob extends Mob {
 	
 	public Blob(Level level, int x, int y) {
 		super(level, "Blob", x, y, 1);
+		this.y += 16;
 	}
 	
 	
@@ -134,7 +135,12 @@ public class Blob extends Mob {
 		hit_data();
 		
 		
-		
+		// adjust for giants
+//		if(scale == 2)
+//		{
+//			yOffset -= 16;
+//			xOffset -= 50;
+//		}
 	
 		
 		if (isSwimming) {
@@ -156,8 +162,8 @@ public class Blob extends Mob {
 
 			}
 			// splashes
-			screen.render(xOffset,yOffset+3,0+27*32,waterColor,0x00,1);
-			screen.render(xOffset+8,yOffset+3,0+27*32,waterColor,0x01,1);
+			screen.render(xOffset,yOffset+3,0+27*32,waterColor,0x00,scale);
+			screen.render(xOffset+8,yOffset+3,0+27*32,waterColor,0x01,scale);
 			
 		}
 		
@@ -202,6 +208,16 @@ public class Blob extends Mob {
 	int dir = 0;
 	public void tick() {
 		
+		if(isKill)
+		{
+			// move off of screen and freeze
+			x = -100;
+			y = -100;
+			speed = 0;
+			
+		} else
+		{
+		
 		if (tickCount % 10 == 0)
 		{
 			dir = random_direction.nextInt(7);
@@ -234,8 +250,13 @@ public class Blob extends Mob {
 		if(isSwimming && level.getTile(this.x>>3, this.y>>3).getId() != 3) {
 			isSwimming = false;
 		}
+		}
 		
 		tickCount++;
+	}
+	
+	public void setKill(boolean kill) {
+		isKill = kill;
 	}
 	
 	
@@ -275,6 +296,7 @@ public class Blob extends Mob {
 		
 		return false;
 	}
+	
 
 }
 

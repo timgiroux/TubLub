@@ -1,5 +1,7 @@
 package entities;
 
+import java.util.ArrayList;
+
 import game.Colors;
 import game.Font;
 import game.InputHandler;
@@ -16,9 +18,14 @@ public class Player extends Mob{
 	private int tickCount = 0;
 	private int jump_state = 0; // 0:false 1:true, 2:jumping, // 3:cool down
 	private int jump_modifier = 0;
+	private boolean hit_success = false; // keeps track of if hit did anything
 	private int hit_state = 0; // 0:false 1:true, 2:hitting, // 3:cool down
 	private int throw_state = 0; // 0:false 1:true, 2:hitting, // 3:cool down
+	private int throw_dir = 0;
 	private int inventory = 0;
+	
+	
+	public static ArrayList<Dart> darts = new ArrayList<Dart>();
 	
 	
 	public Player(Level level, int x, int y, float speed, InputHandler input) {
@@ -39,6 +46,12 @@ public class Player extends Mob{
 			
 			throw_time = System.currentTimeMillis()+delay;
 			
+			if(inventory > 0)
+			{
+				
+				darts.add(new Dart(level, throw_dir, this.x, this.y));
+				add_inventory(-1);
+			}
 			
 			throw_state = 2;
 			
@@ -82,6 +95,7 @@ public class Player extends Mob{
 			// delay 250 ms and then set to 0
 			if(System.currentTimeMillis() > hit_time+250) {
 				hit_state = 0;
+				hit_success = false;
 			}
 		}
 	}
@@ -138,7 +152,7 @@ public class Player extends Mob{
 		{
 			if (inventory < 4)
 			{
-				
+				hit_success = true;
 				inventory = amount;
 			}
 		}
@@ -181,6 +195,32 @@ public class Player extends Mob{
 
 	}
 	
+	public void renderDarts(Screen screen)
+	{
+		for(Dart dart: darts)
+		{
+			dart.render(screen);
+			dart.tick();
+		}
+		
+	}
+	
+	public void dart_hit_data() {
+		for(Dart dart: darts)
+		{
+			if(level.getTile(dart.x/8, dart.y/8).getId() == 1 || 
+			level.getTile(dart.x/8, dart.y/8).getId() == 4)
+			{
+				// if this dart hits tree or stone
+				dart.isHit(true);
+			}
+			else if (level.getTile(dart.x/8, dart.y/8).getId() == 6)
+			{
+				level.alterTile(dart.x/8, dart.y/8, Tile.GRASS);
+			}
+		}
+	}
+	
 	
 	public void render(Screen screen) {
 		int modifier = 8 * scale;
@@ -194,12 +234,17 @@ public class Player extends Mob{
 		int flipTop = (numSteps >> walkingSpeed) & 1;
 		int flipBottom = (numSteps >> walkingSpeed) & 1;
 		
+		
+		// render all darts
+		renderDarts(screen);
+		
 		if(movingDir == 1) {
+			// facing down
 			xTile += 2;
 		} else if (movingDir > 1) {
 			xTile += 4 + ((numSteps >> walkingSpeed) & 1) * 2;
-			flipTop = (movingDir - 1)%2;
-			flipBottom = (movingDir - 1)%2;
+			flipTop = (movingDir-1)%2;
+			flipBottom = (movingDir-1)%2;
 			
 		}
 		
@@ -207,6 +252,7 @@ public class Player extends Mob{
 		jump_data();
 		hit_data();
 		throw_data();
+		dart_hit_data();
 	
 		
 		if (isSwimming) {
@@ -245,7 +291,7 @@ public class Player extends Mob{
 		}
 		
 		// render inventory
-		int inventoryColor = Colors.get(-1, -1, -1, 111);
+		int inventoryColor = Colors.get(-1, -1, -1, 210);
 		int inventory_dist = -1;
 		switch(inventory)
 		{
@@ -274,7 +320,16 @@ public class Player extends Mob{
 			hit_destroy(level);
 			
 			// directional
-			int hitColor = Colors.get(-1, -1, 550, 550);
+			
+			int hitColor;
+			if (hit_success)
+				{
+				hitColor = Colors.get(-1, -1, 500, 500);
+				}
+			else
+			{
+				hitColor = Colors.get(-1, -1, 550, 550);
+			}
 			
 			if(movingDir == 0) {
 				screen.render(xOffset+4,yOffset-5,0+1*32,hitColor,0x00,1);
@@ -283,10 +338,10 @@ public class Player extends Mob{
 				screen.render(xOffset+4,yOffset+14,0+1*32,hitColor,0x10,1);
 			}
 			if(movingDir == 2) {
-				screen.render(xOffset-4,yOffset+3,0+1*32,hitColor,0x00,1);
+				screen.render(xOffset-4,yOffset+7,0+1*32,hitColor,0x00,1);
 			}
 			if(movingDir == 3) {
-				screen.render(xOffset+12,yOffset+3,0+1*32,hitColor,0x01,1);
+				screen.render(xOffset+12,yOffset+7,0+1*32,hitColor,0x01,1);
 			}
 			
 		}
@@ -325,7 +380,7 @@ public class Player extends Mob{
 		if(input.b.isPressed()) {
 			if(throw_state == 0 && !isSwimming) {
 				throw_state = 1;
-				add_inventory(-1);
+				throw_dir = movingDir;
 			}
 			
 			

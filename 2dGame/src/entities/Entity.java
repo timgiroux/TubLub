@@ -6,11 +6,13 @@ import game.level.Level;
 public abstract class Entity {
 	
 	public int x, y;
+	public boolean isKill;
 	
 	protected Level level;
 	
 	public Entity(Level level) {
 		init(level);
+		this.isKill = false;
 		
 	}
 	
@@ -24,6 +26,13 @@ public abstract class Entity {
 
 	public void render(Screen screen, int i, int j) {
 		// TODO Auto-generated method stub
+		
+	}
+
+	public void setKill(boolean b) {
+		// TODO Auto-generated method stub
+
+		isKill = b;
 		
 	}
 	

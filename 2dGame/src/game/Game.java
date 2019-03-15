@@ -119,7 +119,7 @@ public class Game extends Canvas implements Runnable {
 
 		init();
 		PlayMusic musicPlayer = new PlayMusic();
-		musicPlayer.playMusic();
+		// musicPlayer.playMusic();
 
 		while (running) {
 			long now = System.nanoTime();
@@ -185,8 +185,8 @@ public class Game extends Canvas implements Runnable {
 		level.renderTiles(screen, xOffset, yOffset);
 		
 		
-		
-		// level.renderEntities(screen);
+	
+		level.checkDartHit();
 		
 		level.renderMobs(screen, xOffset, yOffset);
 		
