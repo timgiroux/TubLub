@@ -11,6 +11,7 @@ import game.level.tiles.Tile;
 public class Blob extends Mob {
 
 	private int color = Colors.get(-1, 300, 211, 434);
+//	private int color = Colors.get(-1, 050, 411, 141);
 	private int scale = 1;
 	private float speed = 1f;
 	protected boolean isSwimming = false;
@@ -118,7 +119,9 @@ public class Blob extends Mob {
 		yOffset += jump_modifier;
 		
 		int xTile = 10;
+		
 		int yTile = 28;
+		
 		int walkingSpeed = 4;
 		int flipTop = (numSteps >> walkingSpeed) & 1;
 		int flipBottom = (numSteps >> walkingSpeed) & 1;

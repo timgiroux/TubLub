@@ -22,6 +22,7 @@ public class Level {
 	public int width;
 	public int height;
 	public List<Entity> entities = new ArrayList<Entity>();
+	public ArrayList<Blob> blobs = new ArrayList<Blob>();
 	private String imagePath;
 	private BufferedImage image;
 	
@@ -60,6 +61,8 @@ public class Level {
 				tileCheck: for (Tile t : Tile.tiles) {
 					if (t != null && t.getLevelColor() == tileColors[x+y*width]) {
 						this.tiles[x+y*width] = t.getId();
+						
+						
 						
 						if (t.getId() == 4 || t.getId() == 6) {
 							// if tree or grass, add to tiles3d
@@ -105,6 +108,8 @@ public class Level {
 					} else {
 						tiles[x+y * width] = Tile.STONE.getId();
 					}
+					
+					
 				
 			}
 		}
@@ -169,7 +174,9 @@ public class Level {
 		if(!is3d)
 		{
 		
+			
 			getTile(x, y).render(screen, this, x<<3, y<<3);
+			
 			
 			if(getTile(x,y).getId() == 6)
 			{
@@ -284,6 +291,26 @@ public class Level {
 				
 			}
 		}
+	}
+	
+	public void spawnBlob(int x, int y) 
+	{
+		Blob b = new Blob(this, x, y);
+		blobs.add(b);
+		addEntity(b);
+	}
+	
+	public void render(Screen screen, int xOffset, int yOffset)
+	{
+		this.renderTiles(screen, xOffset, yOffset);
+		
+		this.checkPlayerDeath();
+	
+		this.checkDartHit();
+		
+		this.renderMobs(screen, xOffset, yOffset);
+		
+		this.renderTrees(screen);
 	}
 
 	public Tile getTile(int x, int y) {

@@ -13,7 +13,9 @@ public class Player extends Mob{
 
 	private InputHandler input;
 	private int color = Colors.get(-1, 521, 210, 543);
+//	private int color = Colors.get(-1, 500, 100, 300);
 	private int deathColor = Colors.get(-1, 300, 211, 434);
+//	private int deathColor = Colors.get(-1, 500, 100, 300);
 	private int scale = 1;
 	protected boolean isSwimming = false;
 	private int tickCount = 0;
@@ -467,9 +469,9 @@ public class Player extends Mob{
 		
 //		to jump over objects
 		
-//		if(jump_state != 0) {
-//			return false;
-//		}
+		if(jump_state != 0) {
+			return false;
+		}
 		
 		for (int x = xMin; x < xMax ; x++ ) {
 			if(isSolidTile(xa,ya,x,yMin)) {

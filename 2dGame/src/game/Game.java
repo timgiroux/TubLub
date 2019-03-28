@@ -22,7 +22,7 @@ public class Game extends Canvas implements Runnable {
 
 	private static final long serialVersionUID = 1L;
 
-	public static final int WIDTH = 360, HEIGHT = WIDTH / 12 * 9;
+	public static final int WIDTH = 160, HEIGHT = WIDTH / 12 * 9;
 	public static final int SCALE = 3;
 	public static final String NAME = "Game";
 
@@ -41,8 +41,7 @@ public class Game extends Canvas implements Runnable {
 	public InputHandler input;
 	public Level level;
 	public static Player player;
-	public ArrayList<Blob> blobs = new ArrayList<Blob>();
-	public int blobnum = 50;
+
 	
 
 	public Game() {
@@ -81,13 +80,9 @@ public class Game extends Canvas implements Runnable {
 		screen = new Screen(WIDTH, HEIGHT, new SpriteSheet("/sprite_sheet.png"));
 		input = new InputHandler(this);
 		level = new Level("/levels/cool_level.png");
-		player = new Player(level, 200, 200, 2f, input);
+		player = new Player(level, 200, 180, 2f, input);
 		
-		for(int i = 0; i < blobnum; i++) {
-			Blob b = new Blob(level, i*8, 100*(i%5));
-			blobs.add(b);
-			level.addEntity(b);
-		}
+
 		
 		level.addEntity(player);
 		
@@ -119,7 +114,7 @@ public class Game extends Canvas implements Runnable {
 
 		init();
 		PlayMusic musicPlayer = new PlayMusic();
-		// musicPlayer.playMusic();
+//		musicPlayer.playMusic();
 
 		while (running) {
 			long now = System.nanoTime();
@@ -182,15 +177,10 @@ public class Game extends Canvas implements Runnable {
 		int yOffset = player.y - (screen.height/2);
 		
 		
-		level.renderTiles(screen, xOffset, yOffset);
 		
-		level.checkPlayerDeath();
-	
-		level.checkDartHit();
+		level.render(screen, xOffset, yOffset);
 		
-		level.renderMobs(screen, xOffset, yOffset);
 		
-		level.renderTrees(screen);
 		
 		
 		for (int y = 0; y < screen.height; y++) {

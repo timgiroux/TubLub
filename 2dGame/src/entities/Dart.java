@@ -27,18 +27,20 @@ public class Dart extends Entity{
 		case 0:
 			y -= speed;
 			dartTile = 2+27*32;
+			flipDart = 0x01;
 			break;
 		case 1:
 			y += speed;
 			dartTile = 2+27*32;
-			flipDart = 0x01;
+//			flipDart = 0x01;
 			break;
 		case 2:
 			x -= speed;
+			flipDart = 0x01;
 			break;
 		case 3:
 			x += speed;
-			flipDart = 0x01;
+//			flipDart = 0x01;
 		}
 		
 		if(isHit)
